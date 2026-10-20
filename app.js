@@ -969,123 +969,422 @@ function setupMedicalRecordsPage() {
   renderRecords();
 }
 
+
 function setupUserManagementPage() {
   const usersBody = document.querySelector("#users-body");
   const userForm = document.querySelector("#user-form");
-  if (!usersBody || !userForm) return;
+  const rowTemplate = document.querySelector("#user-row-template");
+
+  if (!usersBody || !userForm || !rowTemplate) return;
+
   const formPanel = document.querySelector("#user-form-panel");
   const addUserToggle = document.querySelector("#add-user-toggle");
   const searchInput = document.querySelector("#user-search");
   const roleFilter = document.querySelector("#role-filter");
-  if (addUserToggle && formPanel)
-    addUserToggle.addEventListener("click", () =>
-      formPanel.classList.toggle("open"),
-    );
 
-  const collectUsers = () => {
+  const normalizeEmail = (email) =>
+    String(email || "").trim().toLowerCase();
+
+  const readList = (key) => {
+    try {
+      const value = JSON.parse(localStorage.getItem(key) || "[]");
+      return Array.isArray(value) ? value : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const writeList = (key, value) =>
+    localStorage.setItem(key, JSON.stringify(value));
+
+  const showPopup = (options) => {
+    if (window.Swal?.fire) return window.Swal.fire(options);
+    window.alert([options.title, options.text].filter(Boolean).join("\n\n"));
+    return Promise.resolve({ isConfirmed: true });
+  };
+
+  const getManagedUsers = () => {
+    const users = readList(USERS_KEY);
+    const doctors = readList(DOCTORS_KEY);
     const account = getAccount();
-    const users = [...getUsers()];
-    if (account && !users.some((user) => user.email === account.email))
+
+    if (
+      account &&
+      !users.some(
+        (user) =>
+          normalizeEmail(user.email) === normalizeEmail(account.email)
+      )
+    ) {
       users.unshift({
-        name: `${account.firstName} ${account.lastName}`,
-        email: account.email,
+        ...account,
+        name: account.name ||
+          `${account.firstName || ""} ${account.lastName || ""}`.trim(),
         role: "Patient",
         department: "Patient Services",
-        joined: "Today",
-        lastActive: "Now",
-        status: "Active",
+        status: "Active"
       });
-    getDoctors().forEach((doctor) => {
-      if (!users.some((user) => user.email === doctor.email))
+    }
+
+    doctors.forEach((doctor) => {
+      if (
+        doctor.email &&
+        !users.some(
+          (user) =>
+            normalizeEmail(user.email) === normalizeEmail(doctor.email)
+        )
+      ) {
         users.push({
-          name: doctor.name,
-          email: doctor.email,
+          ...doctor,
           role: doctor.role || "Doctor",
-          department: doctor.specialty,
-          joined: "Today",
-          lastActive: "Now",
-          status: "Active",
+          department: doctor.department || doctor.specialty || "Healthcare",
+          status: doctor.status || "Active"
         });
+      }
     });
+
     return users;
   };
+
   const renderUsers = () => {
-    const users = collectUsers();
-    const query = (searchInput?.value || "").toLowerCase();
-    const role = roleFilter?.value || "All";
-    const filtered = users.filter(
-      (user) =>
-        (role === "All" || user.role === role) &&
-        `${user.name} ${user.email} ${user.department}`
+    const users = getManagedUsers();
+    const query = (searchInput?.value || "").trim().toLowerCase();
+    const selectedRole = roleFilter?.value || "All";
+
+    const filteredUsers = users.filter((user) => {
+      const name = user.name ||
+        `${user.firstName || ""} ${user.lastName || ""}`.trim();
+
+      return (
+        (selectedRole === "All" || user.role === selectedRole) &&
+        `${name} ${user.email || ""} ${user.department || ""}`
           .toLowerCase()
-          .includes(query),
-    );
-    document.querySelector("#total-users").textContent = users.length;
-    document.querySelector("#active-users").textContent =
-      `${users.filter((user) => user.status === "Active").length} active`;
-    document.querySelector("#doctor-users").textContent = users.filter(
-      (user) => user.role === "Doctor",
-    ).length;
-    document.querySelector("#patient-users").textContent = users.filter(
-      (user) => user.role === "Patient",
-    ).length;
-    usersBody.innerHTML = filtered.length
-      ? filtered
-          .map(
-            (user, index) =>
-              `<tr><td><span class="user-avatar">${user.name
-                .split(" ")
-                .map((part) => part[0])
-                .slice(0, 2)
-                .join("")
-                .toUpperCase()}</span><strong>${user.name}</strong><br><small>${user.email}</small></td><td><span class="user-role ${user.role.toLowerCase()}">${user.role}</span></td><td>${user.department || "-"}</td><td>${user.joined || "-"}</td><td>${user.lastActive || "-"}</td><td><span class="user-status">${user.status || "Active"}</span></td><td><button class="user-action" type="button" data-user-index="${index}">Suspend</button></td></tr>`,
-          )
-          .join("")
-      : '<tr><td colspan="7" class="empty-state">No users found.</td></tr>';
+          .includes(query)
+      );
+    });
+
+    const total = document.querySelector("#total-users");
+    const active = document.querySelector("#active-users");
+    const doctorCount = document.querySelector("#doctor-users");
+    const patientCount = document.querySelector("#patient-users");
+
+    if (total) total.textContent = users.length;
+    if (active) {
+      active.textContent =
+        `${users.filter((user) => user.status !== "Suspended").length} active`;
+    }
+    if (doctorCount) {
+      doctorCount.textContent = users.filter(
+        (user) => ["Doctor", "Nurse", "Midwife"].includes(user.role)
+      ).length;
+    }
+    if (patientCount) {
+      patientCount.textContent = users.filter(
+        (user) => user.role === "Patient"
+      ).length;
+    }
+
+    usersBody.replaceChildren();
+
+    if (!filteredUsers.length) {
+      const emptyRow = document.querySelector("#users-empty-row");
+
+      if (emptyRow) {
+        usersBody.appendChild(emptyRow.cloneNode(true));
+      } else {
+        const empty = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = 7;
+        cell.className = "empty-state";
+        cell.textContent = "No accounts found.";
+        empty.appendChild(cell);
+        usersBody.appendChild(empty);
+      }
+      return;
+    }
+
+    filteredUsers.forEach((user) => {
+      const email = normalizeEmail(user.email);
+      const name = user.name ||
+        `${user.firstName || ""} ${user.lastName || ""}`.trim();
+
+      const isProtected =
+        email === normalizeEmail(ADMIN_EMAIL) ||
+        email === normalizeEmail(DOCTOR_EMAIL);
+
+      const row = rowTemplate.content.firstElementChild.cloneNode(true);
+
+      row.querySelector("[data-user-initials]").textContent =
+        name.split(/\s+/).filter(Boolean).map((part) => part[0])
+          .slice(0, 2).join("").toUpperCase();
+
+      row.querySelector("[data-user-name]").textContent = name;
+      row.querySelector("[data-user-email]").textContent = email;
+      row.querySelector("[data-user-role]").textContent = user.role || "Patient";
+      row.querySelector("[data-user-department]").textContent =
+        user.department || "-";
+      row.querySelector("[data-user-joined]").textContent = user.joined || "-";
+      row.querySelector("[data-user-last-active]").textContent =
+        user.lastActive || "-";
+
+      const status = user.status || "Active";
+      row.querySelector("[data-user-status]").textContent = status;
+
+      const suspendButton = row.querySelector("[data-user-suspend]");
+      const deleteButton = row.querySelector("[data-user-delete]");
+
+      if (isProtected) {
+        suspendButton.remove();
+        deleteButton.remove();
+        row.querySelector(".user-action-buttons").textContent =
+          "Protected account";
+      } else {
+        suspendButton.dataset.email = email;
+        suspendButton.textContent =
+          status === "Suspended" ? "Activate" : "Suspend";
+
+        deleteButton.dataset.email = email;
+      }
+
+      usersBody.appendChild(row);
+    });
   };
-  userForm.addEventListener("submit", (event) => {
+
+  addUserToggle?.addEventListener("click", () => {
+    formPanel?.classList.toggle("open");
+  });
+
+  userForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const formData = new FormData(userForm);
-    const users = getUsers();
-    const name = String(formData.get("name") || "").trim();
-    const email = String(formData.get("email") || "").trim().toLowerCase();
-    const role = String(formData.get("role") || "");
-    const department = String(formData.get("department") || "-").trim();
-    const password = String(formData.get("password") || "");
-    const message = document.querySelector("#user-message");
 
-    if (!name || !email || !role || password.length < 8) {
-      if (message) message.textContent = "Enter a name, email, role, and password with at least 8 characters.";
-      return;
-    }
-    if (users.some((user) => String(user.email || "").trim().toLowerCase() === email)) {
-      if (message) message.textContent = "That email is already registered.";
+    if (!isAdminLoggedIn()) {
+      await showPopup({
+        icon: "error",
+        title: "Access denied",
+        text: "Only the logged-in admin can manage accounts."
+      });
       return;
     }
 
-    users.push({
-      name, email, role, department, password,
+    const data = new FormData(userForm);
+    const name = String(data.get("name") || "").trim();
+    const email = normalizeEmail(data.get("email"));
+    const password = String(data.get("password") || "");
+    const role = String(data.get("role") || "Patient");
+    const department = String(data.get("department") || role).trim();
+
+    if (!name || !email || password.length < 8) {
+      await showPopup({
+        icon: "warning",
+        title: "Check the form",
+        text: "Enter a name, valid email, and password of at least 8 characters."
+      });
+      return;
+    }
+
+    if (!["Patient", "Doctor", "Nurse", "Midwife"].includes(role)) {
+      await showPopup({
+        icon: "warning",
+        title: "Invalid role",
+        text: "Please select a valid account role."
+      });
+      return;
+    }
+
+    if (
+      email === normalizeEmail(ADMIN_EMAIL) ||
+      email === normalizeEmail(DOCTOR_EMAIL) ||
+      getManagedUsers().some(
+        (user) => normalizeEmail(user.email) === email
+      )
+    ) {
+      await showPopup({
+        icon: "warning",
+        title: "Email already registered",
+        text: "Please use a different email address."
+      });
+      return;
+    }
+
+    const parts = name.split(/\s+/);
+    const newUser = {
+      id: `USER-${Date.now()}`,
+      name,
+      firstName: parts[0],
+      lastName: parts.slice(1).join(" "),
+      email,
+      password,
+      role,
+      department,
+      phone: String(data.get("phone") || "").trim(),
       joined: new Date().toLocaleDateString(),
       lastActive: "Never",
-      status: "Active",
-    });
+      status: "Active"
+    };
+
+    const users = readList(USERS_KEY);
+    users.push(newUser);
+    writeList(USERS_KEY, users);
+
     if (["Doctor", "Nurse", "Midwife"].includes(role)) {
-      const doctors = getDoctors();
-      if (!doctors.some((doctor) => String(doctor.email || "").toLowerCase() === email)) {
-        doctors.push({ name, role, specialty: department || role, email, contact: "-", password });
-      }
-      localStorage.setItem(DOCTORS_KEY, JSON.stringify(doctors));
+      const doctors = readList(DOCTORS_KEY);
+      doctors.push({ ...newUser, specialty: department });
+      writeList(DOCTORS_KEY, doctors);
     }
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+
     userForm.reset();
-    if (formPanel) formPanel.classList.remove("open");
-    if (message) message.textContent = "User added successfully. They can now log in with their email and password.";
+    formPanel?.classList.remove("open");
     renderUsers();
+
+    await showPopup({
+      icon: "success",
+      title: "Account created",
+      text: `${name} has been added successfully.`
+    });
   });
+
+  usersBody.addEventListener("click", async (event) => {
+    const suspendButton = event.target.closest("[data-user-suspend]");
+    const deleteButton = event.target.closest("[data-user-delete]");
+
+    if (!suspendButton && !deleteButton) return;
+
+    if (!isAdminLoggedIn()) {
+      await showPopup({
+        icon: "error",
+        title: "Access denied",
+        text: "Admin login is required."
+      });
+      return;
+    }
+
+    const email = normalizeEmail(
+      (suspendButton || deleteButton).dataset.email
+    );
+
+    if (
+      email === normalizeEmail(ADMIN_EMAIL) ||
+      email === normalizeEmail(DOCTOR_EMAIL)
+    ) {
+      await showPopup({
+        icon: "warning",
+        title: "Protected account",
+        text: "This built-in account cannot be changed here."
+      });
+      return;
+    }
+
+    const savedUsers = readList(USERS_KEY);
+    const user = savedUsers.find(
+      (item) => normalizeEmail(item.email) === email
+    );
+
+    if (!user) {
+      await showPopup({
+        icon: "error",
+        title: "Account not found",
+        text: "Refresh the page and try again."
+      });
+      return;
+    }
+
+    // Preserve Suspend / Activate behavior.
+    if (suspendButton) {
+      user.status =
+        user.status === "Suspended" ? "Active" : "Suspended";
+
+      writeList(USERS_KEY, savedUsers);
+
+      const doctors = readList(DOCTORS_KEY).map((doctor) =>
+        normalizeEmail(doctor.email) === email
+          ? { ...doctor, status: user.status }
+          : doctor
+      );
+      writeList(DOCTORS_KEY, doctors);
+
+      renderUsers();
+
+      await showPopup({
+        icon: "success",
+        title: user.status === "Suspended"
+          ? "Account suspended"
+          : "Account activated",
+        text: user.status === "Suspended"
+          ? "The account and its records have been kept."
+          : "The account is active again."
+      });
+      return;
+    }
+
+    const result = window.Swal?.fire
+      ? await window.Swal.fire({
+          icon: "warning",
+          title: "Delete account?",
+          text: `Delete ${user.name || email} and its related appointments?`,
+          showCancelButton: true,
+          confirmButtonText: "Yes, delete",
+          cancelButtonText: "Cancel",
+          confirmButtonColor: "#d33"
+        })
+      : { isConfirmed: window.confirm(`Delete ${user.name || email}?`) };
+
+    if (!result.isConfirmed) return;
+
+    // Capture this user's appointments before deleting them.
+    const appointments = readList(APPOINTMENTS_KEY);
+    const removedAppointments = appointments.filter(
+      (item) => normalizeEmail(item.email) === email
+    );
+
+    writeList(
+      USERS_KEY,
+      savedUsers.filter((item) => normalizeEmail(item.email) !== email)
+    );
+
+    writeList(
+      DOCTORS_KEY,
+      readList(DOCTORS_KEY).filter(
+        (item) => normalizeEmail(item.email) !== email
+      )
+    );
+
+    writeList(
+      APPOINTMENTS_KEY,
+      appointments.filter(
+        (item) => normalizeEmail(item.email) !== email
+      )
+    );
+
+    // Remove appointment-linked records, preserving unrelated records.
+    const records = readList(RECORDS_KEY);
+    const remainingRecords = records.filter(
+      (record) =>
+        !removedAppointments.some((appointment) =>
+          isAppointmentRecordFor(record, appointment)
+        )
+    );
+    writeList(RECORDS_KEY, remainingRecords);
+
+    const oldAccount = getAccount();
+    if (oldAccount && normalizeEmail(oldAccount.email) === email) {
+      localStorage.removeItem(ACCOUNT_KEY);
+      localStorage.removeItem(SESSION_KEY);
+    }
+
+    renderUsers();
+
+    await showPopup({
+      icon: "success",
+      title: "Account deleted",
+      text: "The account and matching appointment records were deleted."
+    });
+  });
+
   searchInput?.addEventListener("input", renderUsers);
   roleFilter?.addEventListener("change", renderUsers);
+
   renderUsers();
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
   setupAuthForms();
