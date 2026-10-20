@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clinic Overview | Medical Health Center</title>
+  <link rel="stylesheet" href="admin.css">
+  <script src="admin.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">✚</div>
+        <div>
+          <strong>Medical Health Center</strong>
+          <small>Staff portal</small>
+        </div>
+      </div>
+
+      <nav class="navigation">
+        <span class="nav-heading">WORKSPACE</span>
+        <a class="nav-link active" href="admin.html"><span></span> Overview</a>
+        <a class="nav-link" href="appointments.html"><span></span> Appointments
+          <span class="nav-count" id="pendingCount"></span>
+        </a>
+        <a class="nav-link" href="patients.html"><span></span> Patients</a>
+        <a class="nav-link" href="schedule.html"><span></span> Clinic schedule</a>
+
+        <span class="nav-heading administration">ADMINISTRATION</span>
+        <a class="nav-link" href="settings.html"><span></span> Clinic settings</a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="admin-avatar">AD</div>
+        <div class="admin-details">
+          <strong>Admin</strong>
+          <small>Clinic administrator</small>
+        </div>
+        <button class="logout-btn" id="logoutBtn">↪ Exit staff portal</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1>Clinic overview</h1>
+          <p id="todayLabel">Appointment management dashboard</p>
+        </div>
+        <div class="topbar-right">
+          <button class="notification" id="notificationBtn" title="Notifications">
+             <span id="notificationCount">0</span>
+          </button>
+          <span class="clinic-status"><i></i> Accepting patients</span>
+        </div>
+      </header>
+
+      <section class="content">
+        <div class="stats">
+          <article class="stat-card">
+            <div class="stat-top"><span>Upcoming bookings</span><span class="stat-icon blue"></span></div>
+            <strong id="upcomingTotal">0</strong>
+            <small>Submitted appointment requests</small>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span>Pending</span><span class="stat-icon orange"></span></div>
+            <strong id="pendingTotal">0</strong>
+            <small>Waiting for confirmation</small>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span>Confirmed</span><span class="stat-icon purple"></span></div>
+            <strong id="confirmedTotal">0</strong>
+            <small>Appointments confirmed</small>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span>Cancelled</span><span class="stat-icon green"></span></div>
+            <strong id="cancelledTotal">0</strong>
+            <small>Cancelled appointments</small>
+          </article>
+        </div>
+
+        <section class="appointments-panel" id="appointments">
+          <div class="panel-heading">
+            <div>
+              <h2>Appointment management</h2>
+              <p>Review and manage patient appointments.</p>
+            </div>
+            <label class="search-box">
+              <span>⌕</span>
+              <input type="search" id="searchInput" placeholder="Search name or ID">
+            </label>
+          </div>
+
+          <div class="filter-bar" id="filterBar">
+            <button class="filter active" data-filter="All">All</button>
+            <button class="filter" data-filter="Pending">Pending</button>
+            <button class="filter" data-filter="Confirmed">Confirmed</button>
+            <button class="filter" data-filter="Rejected">Rejected</button>
+            <button class="filter" data-filter="Cancelled">Cancelled</button>
+            <span class="showing" id="showingCount">Showing 0 appointments</span>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>PATIENT</th>
+                  <th>DOCTOR / CONTACT</th>
+                  <th>DIAGNOSIS / REASON</th>
+                  <th>PRESCRIPTION</th>
+                  <th>DATE &amp; TIME</th>
+                  <th>TYPE</th>
+                  <th>STATUS</th>
+                  <th>ACTION</th>
+                </tr>
+              </thead>
+              <tbody id="appointmentTable">
+                <tr><td colspan="9" class="empty">Loading appointments...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer">Medical Health Center · Appointment administration</div>
+        </section>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

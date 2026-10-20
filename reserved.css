@@ -1,0 +1,213 @@
+    @import url("common.css");
+
+    :root {
+    --confirm-navy: #07182e;
+    --confirm-teal: #078f82;
+    --confirm-mint: #e7f5f3;
+    --confirm-paper: #f4f7fb;
+    --confirm-line: #d7e1eb;
+    }
+    * {
+    box-sizing: border-box;
+    }
+    body.reservation-confirmed-page {
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--confirm-paper);
+    color: var(--confirm-navy);
+    font-family: Arial, "Segoe UI", sans-serif;
+    }
+    .confirmation-hero {
+    height: 224px;
+    background: var(--confirm-navy);
+    color: #fff;
+    }
+    .confirmation-hero-content {
+    width: min(856px, calc(100% - 48px));
+    margin: 0 auto;
+    padding-top: 22px;
+    }
+    .clinic-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+    padding: 7px 12px;
+    border: 1px solid #405166;
+    border-radius: 999px;
+    background: #152a3f;
+    color: #aaf0e7;
+    font-size: 10px;
+    font-weight: 700;
+    }
+    .clinic-status span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #35decf;
+    }
+    .confirmation-hero h1 {
+    max-width: none;
+    margin: 20px 0 15px;
+    color: #fff;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 39px;
+    letter-spacing: 0;
+    line-height: 1;
+    }
+    .confirmation-hero-content > p:last-child {
+    width: 465px;
+    margin: 0;
+    color: #f3f7fc;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.72;
+    }
+    .confirmation-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 40px 24px;
+    }
+    .confirmation-panel {
+    width: min(560px, 100%);
+    align-self: flex-start;
+    overflow: hidden;
+    border: 1px solid var(--confirm-line);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 18px 34px rgba(19, 42, 68, 0.08);
+    }
+    .confirmation-heading {
+    min-height: 194px;
+    padding: 35px 28px 28px;
+    background: var(--confirm-mint);
+    text-align: center;
+    }
+    .confirmation-check {
+    display: grid;
+    width: 53px;
+    height: 53px;
+    place-items: center;
+    margin: 0 auto 22px;
+    border-radius: 50%;
+    background: var(--confirm-teal);
+    color: #fff;
+    font-size: 26px;
+    font-weight: 700;
+    }
+    .confirmation-heading h2 {
+    margin: 0;
+    color: var(--confirm-navy);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 26px;
+    letter-spacing: 0;
+    line-height: 1.1;
+    }
+    .confirmation-heading p {
+    margin: 8px 0 0;
+    color: #61718a;
+    font-size: 13px;
+    }
+    .confirmation-details {
+    padding: 26px 33px 27px;
+    }
+    .confirmation-summary {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 17px 35px;
+    padding: 20px 18px;
+    border: 1px solid var(--confirm-line);
+    border-radius: 10px;
+    background: #f4f7fb;
+    }
+    .confirmation-summary div {
+    display: grid;
+    gap: 5px;
+    }
+    .confirmation-summary span {
+    color: #66758c;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    }
+    .confirmation-summary strong {
+    color: var(--confirm-navy);
+    font-size: 12px;
+    }
+    .confirmation-note {
+    margin: 21px 7px 23px;
+    color: #60718c;
+    font-size: 12px;
+    line-height: 1.45;
+    }
+    .another-reservation {
+    display: flex;
+    width: fit-content;
+    min-height: 43px;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 0 21px;
+    border: 1px solid #d6e0e9;
+    border-radius: 10px;
+    color: var(--confirm-navy);
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    }
+    .another-reservation:hover {
+    border-color: var(--confirm-teal);
+    color: var(--confirm-teal);
+    }
+    .confirmation-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 17px max(24px, calc((100% - 856px) / 2));
+    border-top: 1px solid #dbe3eb;
+    background: #fff;
+    color: #66758c;
+    font-family: Arial, "Segoe UI", sans-serif;
+    font-size: 9px;
+    }
+    @media (max-width: 620px) {
+    .confirmation-hero {
+        height: auto;
+        min-height: 230px;
+    }
+    .confirmation-hero-content {
+        width: min(100% - 36px, 500px);
+        padding: 26px 0 35px;
+    }
+    .confirmation-hero h1 {
+        font-size: 34px;
+    }
+    .confirmation-hero-content > p:last-child {
+        width: auto;
+        font-size: 13px;
+    }
+    .confirmation-content {
+        padding: 28px 16px;
+    }
+    .confirmation-heading {
+        min-height: 180px;
+        padding: 30px 18px 24px;
+    }
+    .confirmation-details {
+        padding: 22px 18px;
+    }
+    .confirmation-summary {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    .confirmation-footer {
+        gap: 12px;
+        padding: 15px 18px;
+        font-size: 8px;
+    }
+    }
+
+    

@@ -3,19 +3,16 @@
 .appointment-main {
   padding: 30px;
 }
-
 .appointment-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
 }
-
 .appointment-filters {
   display: flex;
   gap: 10px;
 }
-
 .filter-button {
   min-height: 42px;
   padding: 0 20px;
@@ -24,84 +21,94 @@
   background: #fff;
   color: #718398;
 }
-
 .filter-button:hover {
   background: #e4f5f1;
   color: var(--green);
 }
-
 .filter-button.active {
   border-color: var(--green);
   background: var(--green);
   color: #fff;
 }
-
 .appointment-panel {
   overflow: hidden;
   background: var(--surface);
   border: 1px solid #e1e9ef;
   border-radius: 15px;
 }
-
 .appointment-table-wrap {
   overflow-x: auto;
 }
-
 .appointment-table-wrap table {
   min-width: 900px;
 }
-
 .appointment-id {
   color: #718398;
   font-weight: 700;
 }
-
 .appointment-type {
   color: #5e38b4;
 }
-
 .appointment-status {
   display: inline-flex;
   padding: 5px 11px;
   border-radius: 99px;
-  font-size: .76rem;
+  font-size: 0.76rem;
   font-weight: 800;
 }
-
 .appointment-status.pending {
   background: #fff4dd;
   color: #9c6815;
 }
-
 .appointment-status.confirmed {
   background: #e3f3e9;
   color: var(--green);
 }
-
 .appointment-status.completed {
   background: #e3f3e9;
   color: var(--green);
 }
-
 .appointment-status.cancelled {
   background: #fde6e6;
   color: var(--red);
 }
-
+.appointment-status.rejected {
+  background: #fde6e6;
+  color: var(--red);
+}
+.appointment-actions {
+  display: flex;
+  gap: 6px;
+}
+.appointment-actions button {
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 7px;
+  font-size: 0.78rem;
+}
+.appointment-actions .accept-appointment {
+  background: var(--green);
+}
+.appointment-actions .reject-appointment {
+  background: #fff;
+  border: 1px solid #e7bfc0;
+  color: var(--red);
+}
+.appointment-actions .reject-appointment:hover {
+  background: #fff1f1;
+}
 .cancel-appointment {
   padding: 0;
   min-height: auto;
   background: transparent;
   color: var(--red);
-  font-size: .82rem;
+  font-size: 0.82rem;
 }
-
 .cancel-appointment:hover {
   background: transparent;
   color: #a51f22;
   transform: none;
 }
-
 .empty-state {
   padding: 42px 20px;
   text-align: center;
@@ -112,12 +119,10 @@
   .appointment-main {
     padding: 20px 14px;
   }
-
   .appointment-filters {
     overflow-x: auto;
     width: 100%;
   }
-
   .filter-button {
     white-space: nowrap;
   }

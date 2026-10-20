@@ -1,0 +1,71 @@
+    <!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Reservation confirmed | Health Center Community Clinic</title>
+        <link rel="stylesheet" href="reserved.css" />
+        <script src="app.js" defer></script>
+    </head>
+    <body class="reservation-confirmed-page">
+        <header class="confirmation-hero">
+        <div class="confirmation-hero-content">
+            <p class="clinic-status">
+            <span aria-hidden="true"></span>Walk-in clinic open today until 5:00
+            PM
+            </p>
+            <h1>Reserve your walk-in check-up</h1>
+            <p>
+            Share a few details before you arrive. We'll prepare your check-in and
+            help you spend less time at the front desk.
+            </p>
+        </div>
+        </header>
+
+        <main class="confirmation-content">
+        <article class="confirmation-panel" aria-labelledby="confirmation-title">
+            <header class="confirmation-heading">
+            <span class="confirmation-check" aria-hidden="true">&#10003;</span>
+            <h2 id="confirmation-title">Your check-up is reserved</h2>
+            <p>
+                Thanks, <span data-confirmation-name>patient</span>. We'll be ready
+                to welcome you.
+            </p>
+            </header>
+            <div class="confirmation-details">
+            <section
+                class="confirmation-summary"
+                aria-label="Reservation details"
+            >
+                <div>
+                <span>Visit</span
+                ><strong data-confirmation-service
+                    >General walk-in check-up</strong
+                >
+                </div>
+                <div>
+                <span>Date</span
+                ><strong data-confirmation-date>Friday, October 16, 2026</strong>
+                </div>
+                <div>
+                <span>Arrival window</span
+                ><strong data-confirmation-time>8:00 AM - 11:00 AM</strong>
+                </div>
+            </section>
+            <p class="confirmation-note">
+                Please bring a photo ID, insurance card if applicable, and arrive
+                during your selected window.
+            </p>
+            <a class="another-reservation" href="book.html"
+                >Make another reservation</a
+            >
+            </div>
+        </article>
+        </main>
+
+        <footer class="confirmation-footer">
+        <span>&copy; 2026 Health Center Community Clinic</span
+        ><span>123 Wellness Avenue &middot; Open Monday-Saturday</span>
+        </footer>
+    </body>
+    </html>
