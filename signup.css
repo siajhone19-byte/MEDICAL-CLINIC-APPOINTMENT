@@ -1,0 +1,14 @@
+@import url("common.css");
+@import url("auth.css");
+
+.doctor-image {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: min(100%, 380px);
+    height: 500px;
+    object-fit: cover;
+    object-position: center top;
+    border-radius: 170px 170px 28px 28px;
+    box-shadow: var(--shadow);
+}

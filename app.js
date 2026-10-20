@@ -736,7 +736,7 @@ function setupDoctorPage() {
           .slice(0, 2)
           .join("")
           .toUpperCase();
-        return `<article class="doctor-card"><div class="doctor-card-head"><img class="doctor-avatar" src="logo.jpg" alt="${doctor.name} profile placeholder"><div><h2>${doctor.name}</h2><p class="specialty">${doctor.role || doctor.specialty}</p><p class="credentials">Medical Staff</p></div></div><div class="doctor-metrics"><div><strong>${patientCount}</strong><span>Patients</span></div><div><strong>--</strong><span>Experience</span></div><div><strong>--</strong><span>Rating</span></div></div><div class="doctor-card-footer"><span>Available for booking</span><button class="remove-staff-button" type="button" data-remove-staff="${index}">Remove</button></div></article>`;
+        return `<article class="doctor-card"><div class="doctor-card-head"><img class="doctor-avatar" s" alt="${doctor.name} profile placeholder"><div><h2>${doctor.name}</h2><p class="specialty">${doctor.role || doctor.specialty}</p><p class="credentials">Medical Staff</p></div></div><div class="doctor-metrics"><div><strong>${patientCount}</strong><span>Patients</span></div><div><strong>--</strong><span>Experience</span></div><div><strong>--</strong><span>Rating</span></div></div><div class="doctor-card-footer"><span>Available for booking</span><button class="remove-staff-button" type="button" data-remove-staff="${index}">Remove</button></div></article>`;
       })
       .join("");
   };
@@ -1113,9 +1113,6 @@ function setupUserManagementPage() {
 
       const row = rowTemplate.content.firstElementChild.cloneNode(true);
 
-      row.querySelector("[data-user-initials]").textContent =
-        name.split(/\s+/).filter(Boolean).map((part) => part[0])
-          .slice(0, 2).join("").toUpperCase();
 
       row.querySelector("[data-user-name]").textContent = name;
       row.querySelector("[data-user-email]").textContent = email;

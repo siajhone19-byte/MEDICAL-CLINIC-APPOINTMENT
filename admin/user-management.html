@@ -73,62 +73,62 @@
         </section>
 
 
-<section class="user-panel">
-  <div class="user-table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>User</th>
-          <th>Role</th>
-          <th>Department</th>
-          <th>Joined</th>
-          <th>Last active</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody id="users-body">
-        <tr id="users-empty-row">
-          <td colspan="7" class="empty-state">No user records yet.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
+        <section class="user-panel">
+          <div class="user-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Role</th>
+                  <th>Department</th>
+                  <th>Joined</th>
+                  <th>Last active</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="users-body">
+                <tr id="users-empty-row">
+                  <td colspan="7" class="empty-state">No user records yet.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-<template id="user-row-template">
-  <tr>
-    <td>
-      <span class="user-avatar" data-user-initials></span>
-      <strong data-user-name></strong>
-      <br>
-      <small data-user-email></small>
-    </td>
-    <td><span class="user-role" data-user-role></span></td>
-    <td data-user-department></td>
-    <td data-user-joined></td>
-    <td data-user-last-active></td>
-    <td><span class="user-status" data-user-status></span></td>
-    <td>
-      <div class="user-action-buttons">
-        <button type="button" class="user-action" data-user-suspend>
-          Suspend
-        </button>
-        <button type="button" class="user-action delete-user-action" data-user-delete>
-          Delete
-        </button>
-      </div>
-    </td>
-  </tr>
-</template>
+        <template id="user-row-template">
+          <tr>
+            <td>
+              <span class="user-avatar" data-user-initials></span>
+              <strong data-user-name></strong>
+              <br>
+              <small data-user-email></small>
+            </td>
+            <td><span class="user-role" data-user-role></span></td>
+            <td data-user-department></td>
+            <td data-user-joined></td>
+            <td data-user-last-active></td>
+            <td><span class="user-status" data-user-status></span></td>
+            <td>
+              <div class="user-action-buttons">
+                <button type="button" class="user-action" data-user-suspend>
+                  Suspend
+                </button>
+                <button type="button" class="user-action delete-user-action" data-user-delete>
+                  Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        </template>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="../app.js" defer></script>
-</section>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="../app.js" defer></script>
+      </section>
 
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="../app.js" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <script src="../app.js" defer></script>
       </section>
     </main>
   </div>

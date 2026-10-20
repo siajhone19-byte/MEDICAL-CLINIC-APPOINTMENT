@@ -100,7 +100,7 @@
 
 .doctor-image {
     position: relative;
-    width: min(390px, 85%);
+    width: min(380px, 85%);
     height: 450px;
     object-fit: cover;
     object-position: center top;

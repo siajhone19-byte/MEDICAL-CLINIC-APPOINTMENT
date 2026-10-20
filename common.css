@@ -50,25 +50,6 @@ img {
     min-width: 0;
 }
 
-.hero-visual {
-    position: relative;
-    flex: 1;
-    min-height: 380px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.hero-visual::before {
-    content: "";
-    position: absolute;
-    width: min(90%, 380px);
-    aspect-ratio: 1 / 1;
-    border-radius: 48% 52% 55% 45%;
-    background: #d9f0ef;
-    transform: rotate(-12deg);
-}
 
 .doctor-image {
     position: relative;
@@ -78,7 +59,7 @@ img {
     height: 380px;
     object-fit: cover;
     object-position: center top;
-    border-radius: 190px 190px 28px 28px;
+    border-radius: 170px 170px 28px 28px;
     box-shadow: var(--shadow);
 }
 
