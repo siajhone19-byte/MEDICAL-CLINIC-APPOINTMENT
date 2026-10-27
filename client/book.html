@@ -1,78 +1,294 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book an Appointment | Medical Health Center</title>
+    <link rel="stylesheet" href="../book.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../app.js" defer></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Book an appointment | Medical Health Center</title>
-  <link rel="stylesheet" href="../book.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="../app.js" defer></script>
-</head>
-
-<body>
-  <header class="site-header">
-    <div class="container navbar"><a class="brand" href="index.html"><img src="../logo.jpg"
-          alt="Medical Health Center logo"><span class="brand-text"><strong>MEDICAL</strong><span>Clinic Appointment</span></span></a>
-      <nav class="nav-links"><a href="index.html">Home</a>
-        <a href="login.html" data-logout>Log out</a>
-      </nav>
-    </div>
-  </header>
-  <main>
-    <section class="page-head">
-      <div class="container">
-        <div class="eyebrow">Patient portal</div>
-        <h1>Book your appointment.</h1>
-        <p>Choose a convenient schedule and tell us a little about what brings you in.</p>
+  <body>
+    <header class="site-header">
+      <div class="container navbar">
+        <a class="brand" href="index.html">
+          <img src="../logo.jpg" alt="Medical Health Center logo" />
+          <span class="brand-text">
+            <strong>MEDICAL</strong>
+            <span>Clinic Appointment</span>
+          </span>
+        </a>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="login.html" data-logout>Log out</a>
+        </nav>
       </div>
-    </section>
-    <section class="container booking-layout">
-      <section class="panel">
-        <h2>Appointment details</h2>
-        <p class="panel-subtitle">All fields are required unless marked optional.</p>
-        <form class="booking-form">
-          <div class="form-row"><label>Full name<input type="text" name="patient" placeholder="Juan Dela Cruz"
-                required></label><label>Contact number<input type="tel" name="contact" placeholder="09XX XXX XXXX"
-                required></label></div>
-          <label>Email address<input type="email" name="email" placeholder="you@example.com" required></label>
-          <div class="form-row"><label>Service<select name="service" required>
-                <option value="">Select a service</option>
-                <option>General consultation</option>
-                <option>Family health check</option>
-                <option>Preventive screening</option>
-                <option>Follow-up visit</option>
-              </select></label><label>Health personnel<select name="doctor" id="doctor-choice" required>
-                <option value="">Select health personnel</option>
-                <option value="Doctor">Doctor</option>
-                <option value="Nurse">Nurse</option>
-                <option value="Midwife">Midwife</option>
-              </select></label></div>
-          <label>Preferred date<input type="date" name="date" required></label>
-          <label>Preferred time<select name="time" required>
-              <option value="">Select a time</option>
-              <option>8:00 AM - 9:00 AM</option>
-              <option>10:00 AM - 11:00 AM</option>
-              <option>1:00 PM - 2:00 PM</option>
-              <option>3:00 PM - 4:00 PM</option>
-            </select></label>
-          <label>Reason for visit <span>(optional)</span><textarea name="reason"
-              placeholder="Tell us anything we should know before your visit."></textarea></label>
-          <button type="submit">Submit appointment request</button>
-          <p class="booking-message" id="booking-message" aria-live="polite"></p>
-        </form>
-      </section>
-      <aside class="panel">
-        <div class="eyebrow">Before you visit</div>
-        <h2>A little preparation helps.</h2>
-        <ul class="info-list">
-          <li><b>01</b><span>Bring a valid ID and any previous medical records.</span></li>
-          <li><b>02</b><span>Please arrive 10 minutes before your confirmed schedule.</span></li>
-          <li><b>03</b><span>Our staff will contact you to confirm your appointment.</span></li>
-        </ul>
-      </aside>
-    </section>
-  </main>
-</body>
+    </header>
+    <main>
+      <section class="page-head">
+        <div class="container">
+          <span class="eyebrow">PATIENT PORTAL</span>
 
+          <h1>Book Your Appointment</h1>
+
+          <p>
+            Your health matters to us. Complete the form below to request your
+            appointment with our healthcare team.
+          </p>
+        </div>
+      </section>
+
+      <section class="container booking-layout">
+        <section class="panel">
+          <div class="section-heading">
+            <span class="section-icon">01</span>
+            <div>
+              <h2>Patient Information</h2>
+              <p class="panel-subtitle">
+                Please provide your personal information.
+              </p>
+            </div>
+          </div>
+
+          <form class="booking-form">
+            <div class="form-row three-columns">
+              <label>
+                First Name
+                <input
+                  type="text"
+                  name="patient"
+                  placeholder="Enter first name"
+                  autocomplete="given-name"
+                  required
+                />
+              </label>
+
+              <label>
+                Middle Name
+                <input
+                  type="text"
+                  name="middleName"
+                  placeholder="Enter middle name"
+                  autocomplete="additional-name"
+                />
+              </label>
+
+              <label>
+                Last Name
+                <input
+                  type="text"
+                  name="lastName"
+                  placeholder="Enter last name"
+                  autocomplete="family-name"
+                  required
+                />
+              </label>
+            </div>
+
+            <div class="form-row two-columns">
+              <div class="gender-field">
+                <label class="gender-label">Sex</label>
+
+                <div class="radio-button">
+                  <label>
+                    <input type="radio" name="gender" value="Female" required />
+                    <span>Female</span>
+                  </label>
+
+                  <label>
+                    <input type="radio" name="gender" value="Male" />
+                    <span>Male</span>
+                  </label>
+                </div>
+              </div>
+
+              <label>
+                Date of Birth
+                <input
+                  type="date"
+                  name="birthDate"
+                  autocomplete="bday"
+                  required
+                />
+              </label>
+            </div>
+            <label>
+              Complete Address
+              <input
+                type="text"
+                name="address"
+                placeholder="Province, municipality, barangay, zone"
+                autocomplete="street-address"
+                required
+              />
+            </label>
+
+            <div class="form-row two-columns">
+              <label>
+                Mobile Number
+                <input
+                  type="tel"
+                  name="contact"
+                  placeholder="09XX XXX XXXX"
+                  autocomplete="tel"
+                  required
+                />
+              </label>
+
+              <label>
+                Email Address
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="you@example.com"
+                  autocomplete="email"
+                  required
+                />
+              </label>
+            </div>
+
+            <div class="form-divider"></div>
+
+            <div class="section-heading">
+              <span class="section-icon">02</span>
+              <div>
+                <h2>Appointment Details</h2>
+                <p class="panel-subtitle">
+                  Select your preferred service and schedule.
+                </p>
+              </div>
+            </div>
+            <div class="form-row two-columns">
+              <label>
+                Type of Appointment
+                <select name="service" required>
+                  <option value="">Choose appointment</option>
+                  <option value="General consultation">
+                    General consultation
+                  </option>
+                  <option value="Family health check">
+                    Family health check
+                  </option>
+                  <option value="Preventive screening">
+                    Preventive screening
+                  </option>
+                  <option value="Follow-up visit">Follow-up visit</option>
+                </select>
+              </label>
+
+              <label>
+                Health Personnel
+                <select name="doctor" id="doctor-choice" required>
+                  <option value="">Select personnel</option>
+                  <option value="Doctor">Doctor</option>
+                  <option value="Nurse">Nurse</option>
+                  <option value="Midwife">Midwife</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-row two-columns">
+              <label>
+                Preferred Date
+                <input type="date" name="date" required />
+              </label>
+
+              <label>
+                Preferred Time
+                <select name="time" required>
+                  <option value="">Select a time</option>
+                  <option value="8:00 AM - 9:00 AM">8:00 AM - 9:00 AM</option>
+                  <option value="10:00 AM - 11:00 AM">
+                    10:00 AM - 11:00 AM
+                  </option>
+                  <option value="1:00 PM - 2:00 PM">1:00 PM - 2:00 PM</option>
+                  <option value="3:00 PM - 4:00 PM">3:00 PM - 4:00 PM</option>
+                </select>
+              </label>
+            </div>
+
+            <label>
+              Reason for Visit
+              <span class="optional-label">Optional</span>
+
+              <textarea
+                name="reason"
+                placeholder="Briefly describe the reason for your visit..."
+                rows="4"
+              ></textarea>
+            </label>
+
+            <button type="submit" class="submit-button">
+              Submit Appointment Request
+              <span aria-hidden="true">&rarr;</span>
+            </button>
+
+            <p
+              class="booking-message"
+              id="booking-message"
+              aria-live="polite"
+            ></p>
+
+            <p class="form-note">
+              By submitting this form, you are requesting an appointment. Your
+              schedule is subject to confirmation.
+            </p>
+          </form>
+        </section>
+
+        <aside class="panel info-panel">
+          <span class="eyebrow">YOUR HEALTH, OUR PRIORITY</span>
+
+          <h2>Prepare for Your Visit</h2>
+
+          <p class="info-intro">
+            A few simple steps can help make your clinic visit easier and more
+            convenient.
+          </p>
+
+          <ul class="info-list">
+            <li>
+              <b>01</b>
+              <div>
+                <strong>Bring Your Valid ID</strong>
+                <span>
+                  Bring a valid identification card and any previous medical
+                  records.
+                </span>
+              </div>
+            </li>
+
+            <li>
+              <b>02</b>
+              <div>
+                <strong>Arrive Early</strong>
+                <span>
+                  Please arrive 10 minutes before your confirmed appointment.
+                </span>
+              </div>
+            </li>
+
+            <li>
+              <b>03</b>
+              <div>
+                <strong>Wait for Confirmation</strong>
+                <span>
+                  Our healthcare team will contact you regarding your requested
+                  schedule.
+                </span>
+              </div>
+            </li>
+          </ul>
+
+          <div class="info-reminder">
+            <strong>Reminder</strong>
+            <p>
+              Please provide accurate contact information so our clinic staff
+              can reach you.
+            </p>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </body>
 </html>

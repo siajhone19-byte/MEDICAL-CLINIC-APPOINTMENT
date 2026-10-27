@@ -42,7 +42,7 @@
 }
 
 .doctor-content {
-  min-width: 0;
+  min-width: 100%;
 }
 
 .doctor-topbar {
@@ -50,13 +50,13 @@
 }
 
 .doctor-topbar h1 {
-  font-size: 1.8rem;
+  font-size: 50px;
 }
 
 .doctor-topbar p {
   margin: 4px 0 0;
   color: var(--muted);
-  font-size: .85rem;
+  font-size: 18px;
 }
 
 .doctor-dashboard-main {
@@ -157,14 +157,14 @@
   min-height: 30px;
   padding: 0 11px;
   border-radius: 99px;
-  background: #fff4dd;
-  color: #9c6815;
+  background: #1d71c0b2;
+  color: #fafafa;
   font-size: .76rem;
 }
 
 .doctor-status-button:hover {
-  background: #f6d98d;
-  color: #6f4a0c;
+  background: #103bb1;
+  color: #feffff;
 }
 
 .doctor-status-button.completed,
@@ -211,8 +211,8 @@
 }
 
 .doctor-cancel-button:hover {
-  background: #f7cccc;
-  color: #a51f22;
+  background: #a11d1d;
+  color: #f8efef;
 }
 
 .empty-state {

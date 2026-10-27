@@ -14,14 +14,16 @@
   <header class="doctor-header"><a class="brand" href="dashboard.html"><img src="../INDEX/logo.jpg"
         alt="Medical Health Center logo"><span class="brand-text"><strong>MEDICAL</strong><span>HEALTH
           CENTER</span></span></a>
-    <div class="doctor-header-actions"><span id="selected-doctor-name">Doctor</span><a href="../client/login.html"
-        data-doctor-logout>Log out</a></div>
+    <div class="doctor-header-actions"><span id="selected-doctor-name">Doctor</span>
+      <a href="../client/login.html"
+        data-doctor-logout>Log out</a>
+      </div>
   </header>
   <main class="doctor-content">
     <header class="doctor-topbar">
       <div>
-        <h1>Doctor Dashboard</h1>
-        <p>Sunday, September 6, 2026</p>
+        <h1>Dashboard</h1>
+        <p id="current-date"></p>
       </div>
     </header>
     <section class="doctor-dashboard-main">
@@ -31,8 +33,10 @@
           <h2>Good morning, Doctor.</h2>
           <p>Here is your clinic schedule and patient workload for today.</p>
         </div>
-        <div class="doctor-date">Today<br><strong>September 6</strong></div>
-      </div>
+          <div class="doctor-date">
+            Today<br>
+            <strong id="doctor-today-date"></strong>
+          </div>        </div>
       <div class="stats doctor-stats">
         <div class="stat"><span>Today’s appointments</span>
           <strong id="doctor-today-count">0</strong><small>Scheduled visits</small>
@@ -59,7 +63,7 @@
                 <th>Service</th>
                 <th>Date & time</th>
                 <th>Contact</th>
-                <th>Diagnosis</th>
+                <th>Findings</th>
                 <th>Prescription</th>
                 <th>Status</th>
               </tr>

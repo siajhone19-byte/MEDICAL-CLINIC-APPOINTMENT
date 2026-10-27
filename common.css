@@ -48,50 +48,7 @@ img {
     overflow: hidden;
     padding: 36px;
     min-width: 0;
-}
-
-
-.doctor-image {
-    position: relative;
-    z-index: 1;
-    display: block;
-    width: min(100%, 380px);
-    height: 380px;
-    object-fit: cover;
-    object-position: center top;
-    border-radius: 170px 170px 28px 28px;
-    box-shadow: var(--shadow);
-}
-
-.availability-card {
-    position: absolute;
-    z-index: 2;
-    bottom: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: max-content;
-    max-width: 95%;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 18px;
-    background: #ffffff;
-    border-radius: 14px;
-    box-shadow: var(--shadow);
-}
-
-.availability-card small {
-    display: block;
-    margin-top: 4px;
-    color: #64748b;
-}
-
-.status-dot {
-    width: 10px;
-    height: 10px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    background: #16a34a;
+    
 }
 
 .container {
@@ -132,20 +89,20 @@ img {
 }
 
 .brand-text {
-  line-height: 1.05
+  line-height: 1.05;
 }
 
 .brand-text strong {
   display: block;
   color: var(--green);
-  font-size: 1.12rem;
+  font-size: 50px;
   letter-spacing: .06em
 }
 
 .brand-text span {
   display: block;
   color: var(--ink);
-  font-size: .65rem;
+  font-size: 1.10rem;
   letter-spacing: .16em;
   margin-top: 6px
 }

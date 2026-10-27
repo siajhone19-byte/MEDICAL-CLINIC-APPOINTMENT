@@ -6,6 +6,8 @@
   <meta name="description" content="Book an appointment at Medical Health Center. Explore primary care, family health and preventive screening.">
   <title>Medical Health Center | Care made easier</title>
   <link rel="stylesheet" href="../index.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="../app.js" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -15,8 +17,12 @@
         <span class="brand-text"><strong>MEDICAL</strong><span>CLINIC APPOINTMENT</span></span>
       </a>
       <nav class="nav-links" aria-label="Main navigation">
-        <a href="#services">Our services</a><a href="#about">About us</a><a href="login.html">Patient login</a>
+        <a href="#services">Our services</a><a href="#about">About us</a>
+      
         <a class="button" href="book.html">Book an appointment <span aria-hidden="true">→</span></a>
+        <a href="login.html" data-logout>Log out</a>
+      </nav>
+
       </nav>
     </div>
   </header>

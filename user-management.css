@@ -207,8 +207,8 @@
     }
 
     .user-action:not(.delete-user-action):hover {
-    background: #fff7ed;
-    color: #1986b1;
+    background: #0c7cc7;
+    color: #fdffff;
     border-color: #185aa5;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(234, 88, 12, 0.12);

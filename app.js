@@ -56,8 +56,6 @@ function saveAppointmentRecord(appointment, updates = {}) {
       type: "Appointment",
       doctor: appointment.doctor || "Health personnel",
       date: appointment.date,
-      diagnosis: "Pending consultation",
-      prescription: "To be determined after consultation",
     };
     records.push(record);
   }
@@ -130,6 +128,20 @@ function notifyAndGo(options, destination) {
   });
 }
 
+function updateCurrentDate() {
+  const dateElement = document.getElementById("current-date");
+  if (!dateElement) return;
+  const today = new Date();
+
+  dateElement.textContent = today.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
+}
+
+updateCurrentDate();
 const signupForm = document.getElementById("signup-form");
 
 if (signupForm) {
@@ -377,12 +389,14 @@ function setupAuthForms() {
   }
 }
 
+
 function setupLogout() {
+  // Patient logout
   document.querySelectorAll("[data-logout]").forEach((logoutLink) => {
-    logoutLink.addEventListener("click", (event) => {
+    logoutLink.addEventListener("click", async (event) => {
       event.preventDefault();
 
-      notify({
+      const result = await notify({
         title: "Are you sure?",
         text: "Do you really want to log out?",
         icon: "warning",
@@ -391,20 +405,21 @@ function setupLogout() {
         cancelButtonColor: "#3085d6",
         confirmButtonText: "Yes, log out!",
         cancelButtonText: "Cancel",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          setSession(false);
-          window.location.href = "../client/login.html";
-        }
       });
+
+      if (result.isConfirmed) {
+        setSession(false);
+        localStorage.removeItem(ACCOUNT_KEY);
+        window.location.href = "login.html";
+      }
     });
   });
 
   document.querySelectorAll("[data-admin-logout]").forEach((logoutLink) => {
-    logoutLink.addEventListener("click", (event) => {
+    logoutLink.addEventListener("click", async (event) => {
       event.preventDefault();
 
-      notify({
+      const result = await notify({
         title: "Are you sure?",
         text: "Do you want to log out of your admin account?",
         icon: "warning",
@@ -413,20 +428,21 @@ function setupLogout() {
         cancelButtonColor: "#3085d6",
         confirmButtonText: "Yes, log out!",
         cancelButtonText: "Cancel",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          setAdminSession(false);
-          window.location.href = "../client/login.html";
-        }
       });
+
+      if (result.isConfirmed) {
+        setAdminSession(false);
+        window.location.href = "../client/login.html";
+      }
     });
   });
 
+  // Doctor logout
   document.querySelectorAll("[data-doctor-logout]").forEach((logoutLink) => {
-    logoutLink.addEventListener("click", (event) => {
+    logoutLink.addEventListener("click", async (event) => {
       event.preventDefault();
 
-      notify({
+      const result = await notify({
         title: "Are you sure?",
         text: "Do you want to log out of your doctor account?",
         icon: "warning",
@@ -435,15 +451,18 @@ function setupLogout() {
         cancelButtonColor: "#3085d6",
         confirmButtonText: "Yes, log out!",
         cancelButtonText: "Cancel",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          setDoctorSession(false);
-          window.location.href = "../client/login.html";
-        }
       });
+
+      if (result.isConfirmed) {
+        setDoctorSession(null, false);
+        window.location.href = "../client/login.html";
+      }
     });
   });
 }
+
+
+
 
 function setupProfileMenu() {
   const profileToggle = document.querySelector("[data-profile-toggle]");
@@ -486,52 +505,100 @@ function protectBookingPage() {
     emailField.value = account.email;
 }
 
-function setupBookingForm() {
-  const bookingForm = document.querySelector(".booking-form");
-  if (!bookingForm) return;
-  const doctorChoice = document.querySelector("#doctor-choice");
-  if (doctorChoice) {
-    doctorChoice.disabled = false;
-    const existingValues = new Set(Array.from(doctorChoice.options, (option) => option.value));
-    getDoctors().forEach((doctor) => {
-      if (doctor.name && !existingValues.has(doctor.name)) {
-        const option = document.createElement("option");
-        option.value = doctor.name;
-        option.textContent = doctor.name + (doctor.specialty ? " — " + doctor.specialty : "");
-        doctorChoice.appendChild(option);
-        existingValues.add(doctor.name);
+
+  function setupBookingForm() {
+    const bookingForm = document.querySelector(".booking-form");
+    if (!bookingForm) return;
+    const doctorChoice = document.querySelector("#doctor-choice");
+    if (doctorChoice) {
+      doctorChoice.disabled = false;
+      const existingValues = new Set(
+        Array.from(doctorChoice.options, (option) => option.value)
+      );
+
+      getDoctors().forEach((doctor) => {
+        if (doctor.name && !existingValues.has(doctor.name)) {
+          const option = document.createElement("option");
+
+          option.value = doctor.name;
+          option.textContent =
+            doctor.name +
+            (doctor.specialty ? " — " + doctor.specialty : "");
+
+          doctorChoice.appendChild(option);
+          existingValues.add(doctor.name);
+        }
+      });
+    }
+
+    bookingForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!bookingForm.checkValidity()) {
+        bookingForm.reportValidity();
+        return;
+      }
+
+      const formData = new FormData(bookingForm);
+      const account = getAccount() || {};
+
+      const appointment = {
+        patient: String(formData.get("patient") || "").trim(),
+        contact: String(formData.get("contact") || "").trim(),
+        email: String(formData.get("email") || "").trim(),
+        service: String(formData.get("service") || "").trim(),
+        doctor: String(formData.get("doctor") || "").trim(),
+        date: String(formData.get("date") || ""),
+        time: String(formData.get("time") || ""),
+        reason: String(formData.get("reason") || "").trim(),
+        age: account.age || "N/A",
+        bloodType: account.bloodType || "N/A",
+        condition: account.condition || "N/A",
+        status: "Pending"
+      };
+
+      try {
+        const appointments = getAppointments();
+        appointments.push(appointment);
+
+        localStorage.setItem(
+          APPOINTMENTS_KEY,
+          JSON.stringify(appointments)
+        );
+        saveAppointmentRecord(appointment);
+        const bookingMessage = document.querySelector("#booking-message");
+        if (bookingMessage) {
+          bookingMessage.textContent =
+            "Appointment request submitted successfully.";
+        }
+
+          const result = await notify({
+            icon: "success",
+            title: "Appointment Submitted!",
+            text: "Your appointment request has been submitted successfully.",
+            confirmButtonText: "OK",
+            confirmButtonColor: "#3085d6",
+            timer: 3000,
+            timerProgressBar: true
+          });
+
+          if (result.isConfirmed || result.dismiss === Swal.DismissReason.timer) {
+            window.location.href = "../client/index.html";
+          }
+          bookingForm.reset();
+          protectBookingPage();
+
+      } catch (error) {
+        console.error("Booking submission error:", error);
+
+        await notify({
+          icon: "error",
+          title: "Submission Failed!",
+          text: "Unable to submit your appointment. Please try again.",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#d33"
+        });
       }
     });
-  }
-
-  bookingForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const formData = new FormData(bookingForm);
-    const account = getAccount() || {};
-    const appointment = {
-      patient: String(formData.get("patient")),
-      contact: String(formData.get("contact")),
-      email: String(formData.get("email")),
-      service: String(formData.get("service")),
-      doctor: String(formData.get("doctor")),
-      date: String(formData.get("date")),
-      time: String(formData.get("time")),
-      reason: String(formData.get("reason") || ""),
-      age: account.age || "N/A",
-      bloodType: account.bloodType || "N/A",
-      condition: account.condition || "N/A",
-      status: "Pending",
-    };
-    const appointments = getAppointments();
-    appointments.push(appointment);
-    localStorage.setItem(APPOINTMENTS_KEY, JSON.stringify(appointments));
-    saveAppointmentRecord(appointment);
-    bookingForm.reset();
-    const bookingMessage = document.querySelector("#booking-message");
-    if (bookingMessage)
-      bookingMessage.textContent =
-        "Appointment request submitted successfully.";
-  });
 }
 
 function renderAdminAppointments() {
@@ -569,7 +636,6 @@ function renderAdminAppointments() {
           item.date === appointment.date &&
           item.doctor === appointment.doctor,
       );
-      return `<tr><td><strong>${appointment.patient}</strong><br><small>${appointment.email}</small></td><td>${appointment.service}</td><td>${appointment.doctor || "N/A"}</td><td>${record?.diagnosis || "Pending consultation"}</td><td>${record?.prescription || "To be determined"}</td><td>${appointment.date}<br>${appointment.time}</td><td>${appointment.contact}</td><td><button class="complete-button ${appointment.status === "Completed" ? "completed" : ""}" data-appointment-index="${index}" type="button">${appointment.status}</button></td></tr>`;
     })
     .join("");
 }
@@ -667,7 +733,7 @@ function renderAllAppointments(filter = "All") {
           item.date === appointment.date &&
           item.doctor === appointment.doctor,
       );
-      return `<tr><td class="appointment-id">${appointmentId}</td><td><strong>${appointment.patient}</strong><br><small>${appointment.email}</small></td><td>${appointment.doctor || "N/A"}<br><small>${appointment.contact}</small></td><td>${record?.diagnosis || "Pending consultation"}</td><td>${record?.prescription || "To be determined"}</td><td>${appointment.date}<br>${appointment.time}</td><td class="appointment-type">${appointment.service}</td><td><span class="appointment-status ${statusClass}">${appointment.status}</span></td><td>${appointment.status === "Cancelled" ? "-" : `<button class="cancel-appointment" type="button" data-cancel-index="${appointments.indexOf(appointment)}">Cancel</button>`}</td></tr>`;
+      return `<tr><td class="appointment-id">${appointmentId}</td><td><strong>${appointment.patient}</strong><br><small>${appointment.email}</small></td><td>${appointment.doctor || "N/A"}<br><small>${appointment.contact}</small></td><td>${record?.diagnosis || "Finding diagnosis"}</td><td>${record?.prescription || "To be determined"}</td><td>${appointment.date}<br>${appointment.time}</td><td class="appointment-type">${appointment.service}</td><td><span class="appointment-status ${statusClass}">${appointment.status}</span></td><td>${appointment.status === "Cancelled" ? "-" : `<button class="cancel-appointment" type="button" data-cancel-index="${appointments.indexOf(appointment)}">Cancel</button>`}</td></tr>`;
     })
     .join("");
 }
@@ -794,7 +860,7 @@ function setupDoctorDashboard() {
           )
           .join("")
       : '<option value="">No doctors added</option>';
-  const renderDashboard = () => {
+    const renderDashboard = () => {
     const appointments = getAppointments();
     const medicalRecords = getMedicalRecords();
     const activeDoctor =
@@ -868,8 +934,6 @@ function setupDoctorDashboard() {
       const diagnosis = row.querySelector('[data-record-field="diagnosis"]');
       const prescription = row.querySelector('[data-record-field="prescription"]');
       saveAppointmentRecord(appointment, {
-        diagnosis: diagnosis ? diagnosis.value.trim() : "Pending consultation",
-        prescription: prescription ? prescription.value.trim() : "To be determined after consultation",
       });
     }
     appointment.status = isCancelled ? "Cancelled" : "Completed";
@@ -919,8 +983,6 @@ function setupMedicalRecordsPage() {
           type: "Appointment",
           doctor: appointment.doctor || "Health personnel",
           date: appointment.date,
-          diagnosis: "Pending consultation",
-          prescription: "To be determined after consultation",
         });
         seenAppointmentRecords.add(recordKey);
         changed = true;
@@ -1137,7 +1199,7 @@ function setupUserManagementPage() {
       } else {
         suspendButton.dataset.email = email;
         suspendButton.textContent =
-          status === "Suspended" ? "Activate" : "Suspend";
+          status === "Suspended" ? "Deactivated" : "Activated";
 
         deleteButton.dataset.email = email;
       }
@@ -1303,7 +1365,7 @@ function setupUserManagementPage() {
       await showPopup({
         icon: "success",
         title: user.status === "Suspended"
-          ? "Account suspended"
+          ? "Account Deactivated"
           : "Account activated",
         text: user.status === "Suspended"
           ? "The account and its records have been kept."
@@ -1351,7 +1413,6 @@ function setupUserManagementPage() {
       )
     );
 
-    // Remove appointment-linked records, preserving unrelated records.
     const records = readList(RECORDS_KEY);
     const remainingRecords = records.filter(
       (record) =>

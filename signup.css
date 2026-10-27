@@ -1,14 +1,38 @@
 @import url("common.css");
 @import url("auth.css");
 
-.doctor-image {
-    position: relative;
-    z-index: 1;
-    display: block;
-    width: min(100%, 380px);
-    height: 500px;
-    object-fit: cover;
-    object-position: center top;
-    border-radius: 170px 170px 28px 28px;
-    box-shadow: var(--shadow);
+
+
+.panel {
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: #fff;
+    box-shadow: 0 10px 30px #15334a08
+}
+
+.info-list {
+    display: grid;
+    gap: 18px;
+    margin: 22px 0 0;
+    padding: 0;
+    list-style: none
+}
+
+.info-list li {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    color: var(--muted);
+    font-size: .9rem
+}
+
+.info-list b {
+    display: grid;
+    place-items: center;
+    flex: 0 0 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--mint);
+    color: var(--green)
 }
