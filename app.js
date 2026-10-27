@@ -541,16 +541,35 @@ function protectBookingPage() {
       const formData = new FormData(bookingForm);
       const account = getAccount() || {};
 
+      const firstName = String(formData.get("patient") || "").trim();
+      const middleName = String(formData.get("middleName") || "").trim();
+      const lastName = String(formData.get("lastName") || "").trim();
+      const patientFullName = [firstName, middleName, lastName].filter(Boolean).join(" ");
+      const birthDate = String(formData.get("birthDate") || "");
+      let patientAge = account.age || "N/A";
+      if (birthDate) {
+        const born = new Date(birthDate + "T00:00:00");
+        const today = new Date();
+        let years = today.getFullYear() - born.getFullYear();
+        const beforeBirthday = today.getMonth() < born.getMonth() ||
+          (today.getMonth() === born.getMonth() && today.getDate() < born.getDate());
+        if (beforeBirthday) years--;
+        patientAge = years >= 0 ? String(years) : "N/A";
+      }
       const appointment = {
-        patient: String(formData.get("patient") || "").trim(),
+        patient: patientFullName || firstName,
+        firstName, middleName, lastName,
+        gender: String(formData.get("gender") || "").trim(),
+        birthDate,
+        address: String(formData.get("address") || "").trim(),
         contact: String(formData.get("contact") || "").trim(),
-        email: String(formData.get("email") || "").trim(),
+        email: String(formData.get("email") || "").trim().toLowerCase(),
         service: String(formData.get("service") || "").trim(),
         doctor: String(formData.get("doctor") || "").trim(),
         date: String(formData.get("date") || ""),
         time: String(formData.get("time") || ""),
         reason: String(formData.get("reason") || "").trim(),
-        age: account.age || "N/A",
+        age: patientAge,
         bloodType: account.bloodType || "N/A",
         condition: account.condition || "N/A",
         status: "Pending"
@@ -902,22 +921,40 @@ function setupDoctorDashboard() {
                 item.doctor === appointment.doctor,
             );
             const appointmentIndex = appointments.indexOf(appointment);
-            return `<tr><td><strong>${appointment.patient}</strong><br><small>${appointment.email}</small></td><td>${appointment.age || "N/A"}</td><td>${appointment.bloodType || "N/A"}</td><td>${appointment.condition || "N/A"}</td><td>${appointment.service}</td><td>${appointment.date}<br>${appointment.time}</td><td>${appointment.contact}</td><td><input class="doctor-record-input" data-record-field="diagnosis" data-doctor-appointment-index="${appointmentIndex}" value="${record?.diagnosis || ""}" placeholder="Diagnosis"></td><td><input class="doctor-record-input" data-record-field="prescription" data-doctor-appointment-index="${appointmentIndex}" value="${record?.prescription || ""}" placeholder="Prescription"></td><td><div class="doctor-actions"><button class="doctor-status-button ${appointment.status === "Completed" ? "completed" : ""}" type="button" data-doctor-action="status" data-doctor-appointment-index="${appointmentIndex}" ${appointment.status === "Completed" ? "disabled" : ""}>${appointment.status === "Completed" ? "Done" : "Complete"}</button>${appointment.status === "Completed" ? "" : `<button class="doctor-cancel-button" type="button" data-doctor-action="cancel" data-doctor-appointment-index="${appointmentIndex}">Cancel</button>`}</div></td></tr>`;
+            return `<tr><td><strong>${escapeHTML(appointment.patient)}</strong><br><small>${escapeHTML(appointment.email)}</small><br><small>${escapeHTML(appointment.gender || "Sex not provided")} · DOB: ${escapeHTML(appointment.birthDate || "N/A")}</small><br><small>${escapeHTML(appointment.address || "Address not provided")}</small></td><td>${escapeHTML(appointment.age || "N/A")}</td><td>${escapeHTML(appointment.bloodType || "N/A")}</td><td>${escapeHTML(appointment.condition || "N/A")}</td><td>${escapeHTML(appointment.service)}</td><td>${escapeHTML(appointment.date)}<br>${escapeHTML(appointment.time)}</td><td>${escapeHTML(appointment.contact)}</td><td><textarea class="doctor-record-input doctor-diagnosis-input" data-record-field="diagnosis" data-doctor-appointment-index="${appointmentIndex}" rows="3" placeholder="Enter diagnosis..." aria-label="Diagnosis for ${escapeHTML(appointment.patient)}">${escapeHTML(record?.diagnosis || "")}</textarea></td><td><textarea class="doctor-record-input doctor-prescription-input" data-record-field="prescription" data-doctor-appointment-index="${appointmentIndex}" rows="3" placeholder="Enter prescription..." aria-label="Prescription for ${escapeHTML(appointment.patient)}">${escapeHTML(record?.prescription || "")}</textarea></td><td><div class="doctor-actions"><button class="doctor-status-button ${appointment.status === "Completed" ? "completed" : ""}" type="button" data-doctor-action="status" data-doctor-appointment-index="${appointmentIndex}" ${appointment.status === "Completed" ? "disabled" : ""}>${appointment.status === "Completed" ? "Done" : "Complete"}</button>${appointment.status === "Completed" ? "" : `<button class="doctor-cancel-button" type="button" data-doctor-action="cancel" data-doctor-appointment-index="${appointmentIndex}">Cancel</button>`}</div></td></tr>`;
           })
           .join("")
       : '<tr><td colspan="10" class="empty-state">No appointments yet.</td></tr>';
+    appointmentsBody.querySelectorAll("textarea.doctor-record-input").forEach((textarea) => {
+      Object.assign(textarea.style, {
+        boxSizing: "border-box", width: "100%", minWidth: "150px",
+        minHeight: "84px", padding: "10px 12px",
+        border: "1px solid #d6e0eb", borderRadius: "8px",
+        background: "#ffffff", color: "#243447", font: "inherit",
+        lineHeight: "1.45", resize: "vertical", overflow: "auto"
+      });
+    });
   };
   if (doctorSelect) doctorSelect.addEventListener("change", renderDashboard);
 
-  appointmentsBody.addEventListener("change", (event) => {
-    const input = event.target.closest(".doctor-record-input");
-    if (!input) return;
+  const saveDoctorTextField = (input) => {
     const appointments = getAppointments();
     const appointment = appointments[Number(input.dataset.doctorAppointmentIndex)];
     if (!appointment) return;
     saveAppointmentRecord(appointment, {
       [input.dataset.recordField]: input.value.trim(),
     });
+  };
+  appointmentsBody.addEventListener("change", (event) => {
+    const input = event.target.closest(".doctor-record-input");
+    if (input) saveDoctorTextField(input);
+  });
+  appointmentsBody.addEventListener("input", (event) => {
+    const textarea = event.target.closest("textarea.doctor-record-input");
+    if (!textarea) return;
+    textarea.style.height = "auto";
+    textarea.style.height = Math.max(84, textarea.scrollHeight) + "px";
+    saveDoctorTextField(textarea);
   });
 
   appointmentsBody.addEventListener("click", (event) => {
@@ -933,7 +970,11 @@ function setupDoctorDashboard() {
     if (row && !isCancelled) {
       const diagnosis = row.querySelector('[data-record-field="diagnosis"]');
       const prescription = row.querySelector('[data-record-field="prescription"]');
+      const diagnosis = row.querySelector('[data-record-field="diagnosis"]');
+      const prescription = row.querySelector('[data-record-field="prescription"]');
       saveAppointmentRecord(appointment, {
+        diagnosis: diagnosis ? diagnosis.value.trim() : "",
+        prescription: prescription ? prescription.value.trim() : ""
       });
     }
     appointment.status = isCancelled ? "Cancelled" : "Completed";
